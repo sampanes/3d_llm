@@ -7,7 +7,7 @@ exports to STL, and validates the result.
 
 Usage:
     python -m scripts.generate --prompt "A 20-tooth spur gear" --llm openai --pipeline openscad
-    python -m scripts.generate --prompt "A phone stand" --llm anthropic --model claude-sonnet-4-20250514 --pipeline cadquery
+    python -m scripts.generate --prompt "A phone stand" --llm anthropic --model claude-sonnet-4-6 --pipeline cadquery
     python -m scripts.generate --prompt "A hexagonal vase" --llm google --few-shot
     python -m scripts.generate --prompt "Recreate this voronoi vase" --image photo.jpg --pipeline sdf --few-shot
 """

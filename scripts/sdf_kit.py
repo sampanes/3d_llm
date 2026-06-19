@@ -608,6 +608,10 @@ def mesh(
 
     lo = np.asarray(bounds[0], dtype=np.float64)
     hi = np.asarray(bounds[1], dtype=np.float64)
+    if not np.all(lo < hi):
+        raise ValueError(
+            f"bounds lo must be < hi in every axis; got lo={tuple(lo)}, hi={tuple(hi)}"
+        )
     dims = np.maximum(np.ceil((hi - lo) / voxel).astype(int) + 1, 2)
     nx, ny, nz = (int(dims[0]), int(dims[1]), int(dims[2]))
     n_total = nx * ny * nz

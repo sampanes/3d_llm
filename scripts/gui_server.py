@@ -499,7 +499,8 @@ def _run_job(job: Job) -> None:
             creationflags=creationflags,
         )
         job.process = proc
-        assert proc.stdout is not None
+        if proc.stdout is None:
+            raise RuntimeError("subprocess stdout pipe was not created")
         for line in proc.stdout:
             with JOBS_LOCK:
                 job.output.append(line)

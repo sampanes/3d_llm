@@ -174,14 +174,14 @@ def validate_stl(
     # Euler number
     try:
         report.euler_number = int(mesh.euler_number)
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug("Could not compute euler_number: %s", exc)
 
     # Edge count
     try:
         report.edges_total = len(mesh.edges)
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug("Could not compute edge count: %s", exc)
 
     # --- Quality checks ----------------------------------------------------
     if not report.is_watertight:
@@ -202,8 +202,8 @@ def validate_stl(
             report.warnings.append(
                 f"{degen_count} degenerate (zero-area) triangles detected"
             )
-    except Exception:
-        pass
+    except Exception as exc:
+        logger.debug("Could not check degenerate triangles: %s", exc)
 
     # --- Repair ------------------------------------------------------------
     if fix:

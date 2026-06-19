@@ -11,11 +11,14 @@ All units mm.
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
 import trimesh
+
+logger = logging.getLogger(__name__)
 
 
 # ---------------------------------------------------------------------------
@@ -131,6 +134,7 @@ def weld(m: trimesh.Trimesh, tolerance: float = 1e-3) -> trimesh.Trimesh:
     mgl.merge()
     man = m3d.Manifold(mgl)
     if man.status() != m3d.Error.NoError:
+        logger.warning("Manifold weld failed (status=%s); falling back to basic_repair", man.status())
         return basic_repair(m)
     out = man.to_mesh()
     verts = np.asarray(out.vert_properties)[:, :3]
