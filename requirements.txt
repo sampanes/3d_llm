@@ -1,0 +1,32 @@
+# Verified working set — installed and tested 2026-06-10 on Python 3.11 / Windows.
+# Exact resolved versions: requirements.lock.txt
+
+# ── LLM provider SDKs (Tier B: API-driven generation) ──
+openai>=1.40
+anthropic>=0.40
+google-genai>=1.0        # replaces deprecated google-generativeai
+
+# ── Geometry / mesh stack (Tier A: agent-driven modeling) ──
+numpy>=1.26
+scipy>=1.11
+scikit-image>=0.22       # marching cubes
+trimesh>=4.4             # mesh IO, analysis, repair
+manifold3d>=2.5          # robust booleans + manifold welding
+fast-simplification>=0.1.7   # quadric decimation backend for trimesh
+mapbox-earcut>=1.0       # polygon triangulation (plane-cut capping)
+shapely>=2.0
+rtree>=1.2
+networkx>=3.2
+pillow>=10.0
+pyvista>=0.44            # offscreen STL -> PNG rendering
+numpy-stl>=3.0
+
+# ── CAD kernels ──
+cadquery>=2.5            # B-rep CAD (exact dims, fillets, STEP)
+solidpython2>=2.0        # SolidPython2 (import name: solid2): Python -> OpenSCAD source
+
+# ── Utilities ──
+rich>=13.0
+click>=8.0
+python-dotenv>=1.0
+pyyaml>=6.0              # batch_generate job files

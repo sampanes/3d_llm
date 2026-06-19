@@ -1,0 +1,26 @@
+{
+  "height_mm": 140.0,
+  "base_diameter_mm": 90.0,
+  "top_diameter_mm": 36.0,
+  "profile_curve": 1.2,
+
+  "tube_count": 32,
+  "tube_radius_min_mm": 3.2,
+  "tube_radius_max_mm": 5.8,
+  "tube_taper": 0.85,
+  "tube_wander_mm": 1.8,
+  "tube_steps": 20,
+  "min_height_frac": 0.55,
+
+  "blend_mm": 2.2,
+  "base_height_mm": 9.0,
+  "mouth_depth_mm": 7.0,
+  "mouth_wall_mm": 1.6,
+
+  "noise_amplitude_mm": 0.4,
+  "noise_frequency": 0.09,
+
+  "seed": 7,
+  "voxel_mm": 0.45,
+  "decimate_to": 280000
+}

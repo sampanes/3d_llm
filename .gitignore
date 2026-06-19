@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Environment / secrets
+.env
+.env.local
+
+# Generated output
+output/
+
+# Experiments - ignore large STLs only
+experiments/**/*.stl
+# Local debug scratch (screenshots, throwaway test meshes/scripts)
+experiments/_gui_debug/
+
+# Personal print collection - not part of the toolkit, names are personal
+gcode_examples/
+
+# Model build outputs (regenerable from model.py + params.json)
+models/*/output/
+
+# Bundled tools (portable OpenSCAD is large; re-download via setup)
+tools/openscad/
+tools/downloads/
+requirements.lock.txt.bak
+
+# NOTE: stl_library/ is NOT ignored.
+# Curated, print-tested STLs are checked in.
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / editor
+.vscode/
+.idea/

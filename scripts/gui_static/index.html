@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>3D LLM Workbench</title>
+    <link rel="stylesheet" href="/static/styles.css?v=20260612c">
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar" data-help="This is the local workbench for model builds, mesh edits, validation, previews, and command learning.">
+        <div data-help="The project root currently served by scripts.gui_server. All file paths stay inside this repo.">
+          <h1>3D LLM Workbench</h1>
+          <span class="tagline">Pick a model or STL, choose an action, inspect the command, then run the repo script.</span>
+          <span id="rootPath" class="subtle"></span>
+        </div>
+        <div class="top-actions">
+          <button id="helpBtn" type="button" data-help="Open the help drawer with a compact map of the workbench.">Help</button>
+          <button id="refreshBtn" type="button" data-help="Reload model folders, STL files, and generated outputs from disk.">Refresh</button>
+          <button id="copyCommandBtn" type="button" data-help="Copy the exact command currently shown in the Command panel.">Copy command</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="panel left-panel" data-help="Pick source folders and STL files here. Selections feed the command builder on the right.">
+          <section data-help="A model folder contains spec.md, params.json, and model.py. Build model runs scripts.build_model for this folder.">
+            <label for="modelSelect">Model</label>
+            <select id="modelSelect"></select>
+          </section>
+
+          <section data-help="Choose the primary STL to validate, preview, or edit. The filter narrows paths without moving files.">
+            <label for="meshSearch">Mesh</label>
+            <input id="meshSearch" type="search" placeholder="Filter STL paths" data-help="Type part of a path or filename to narrow the mesh list.">
+            <select id="meshSelect" size="12" data-help="Primary mesh input. Selecting a mesh also loads it in the viewer."></select>
+          </section>
+
+          <section data-help="Used only by Boolean meshes. It becomes mesh B for union, difference, or intersection.">
+            <label for="meshBSelect">Second mesh</label>
+            <select id="meshBSelect" data-help="Secondary mesh input for the boolean operation."></select>
+          </section>
+        </aside>
+
+        <section class="viewer-panel" data-help="Interactive STL preview. Drag with left or middle mouse, scroll to zoom, or snap to a named view.">
+          <div class="viewer-toolbar" data-help="Viewer controls and current mesh dimensions. Snap buttons only move the camera.">
+            <div class="segmented" aria-label="Snap view" data-help="Snap the viewer camera to a repeatable orientation.">
+              <button type="button" data-view="iso" data-help="Snap to an isometric 3D view.">Iso</button>
+              <button type="button" data-view="front" data-help="Snap to the front orthographic-like view.">Front</button>
+              <button type="button" data-view="right" data-help="Snap to the right side view.">Right</button>
+              <button type="button" data-view="top" data-help="Snap to a top-down view.">Top</button>
+            </div>
+            <div class="viewer-stats" id="viewerStats" data-help="Shows the loaded mesh path, bounding-box size, and triangle count.">No mesh loaded</div>
+            <button id="openExternalBtn" type="button" data-help="Open the selected STL in your default Windows 3D app (3D Builder).">Open in 3D Builder</button>
+          </div>
+          <canvas id="meshCanvas" data-help="WebGL STL canvas. Drag to rotate, wheel to zoom."></canvas>
+        </section>
+
+        <aside class="panel right-panel" data-help="Choose an action, tune flags, inspect the generated command, then run it.">
+          <section data-help="This selects which script or edit_stl subcommand the GUI will build.">
+            <label for="actionSelect">Action</label>
+            <select id="actionSelect" data-help="Changing this swaps the option controls and rebuilds the command preview.">
+              <option value="generate">Generate from prompt (LLM)</option>
+              <option value="build_model">Build model</option>
+              <option value="validate">Validate mesh</option>
+              <option value="mesh_preview">Render PNG preview</option>
+              <option value="edit:repair">Repair mesh</option>
+              <option value="edit:remesh">Voxel remesh</option>
+              <option value="edit:place">Place on bed</option>
+              <option value="edit:scale">Scale mesh</option>
+              <option value="edit:rotate">Rotate mesh</option>
+              <option value="edit:translate">Translate mesh</option>
+              <option value="edit:hollow">Hollow mesh</option>
+              <option value="edit:boolean">Boolean meshes</option>
+              <option value="edit:cut">Cut mesh</option>
+              <option value="edit:decimate">Decimate mesh</option>
+              <option value="edit:smooth">Smooth mesh</option>
+              <option value="edit:convert">Convert mesh</option>
+            </select>
+          </section>
+
+          <section id="optionsPanel" class="options-grid" data-help="Action-specific flags. Every change updates the command preview before anything runs."></section>
+
+          <section data-help="The exact command that will run, followed by a plain-language breakdown of each positional argument and flag.">
+            <div class="section-title">
+              <span>Command</span>
+              <span id="commandStatus" class="badge neutral" data-help="Command state: ready, copied, running, succeeded, failed, or input check needed.">ready</span>
+            </div>
+            <pre id="commandLine" class="command-line" data-help="This is copied verbatim when you press Copy command."></pre>
+            <div id="flagList" class="flag-list" data-help="Each row explains why a command argument or flag is present."></div>
+          </section>
+
+          <section class="run-row" data-help="Run starts a background job. Cancel asks the current process to terminate.">
+            <button id="runBtn" type="button" class="primary" data-help="Run the command currently shown in the Command panel.">Run</button>
+            <button id="cancelBtn" type="button" disabled data-help="Stop the running background job if one is active.">Cancel</button>
+          </section>
+        </aside>
+      </main>
+
+      <section class="log-panel" data-help="Live stdout/stderr from the running command. This is the same output you would see in a terminal.">
+        <div class="section-title">
+          <span>Job output</span>
+          <span id="jobMeta" class="subtle" data-help="Current job status and process return code when finished.">idle</span>
+        </div>
+        <pre id="jobOutput" data-help="Command output accumulates here while a job runs."></pre>
+      </section>
+    </div>
+
+    <div id="helpScrim" class="help-scrim" hidden></div>
+    <aside id="helpDrawer" class="help-drawer" aria-hidden="true" aria-labelledby="helpTitle">
+      <div class="help-head">
+        <div>
+          <h2 id="helpTitle">Help</h2>
+          <span class="subtle">Hover any control for local help.</span>
+        </div>
+        <button id="closeHelpBtn" type="button" data-help="Close the help drawer.">Close</button>
+      </div>
+      <div class="help-body">
+        <section>
+          <h3>What this does</h3>
+          <p>This GUI is a friendly shell over the repository scripts. It lists model folders and STL files, builds commands like <code>.venv\Scripts\python -m scripts.validate_stl ...</code>, runs them as background jobs, and shows the output.</p>
+        </section>
+        <section>
+          <h3>What it does not do</h3>
+          <p>It does not replace model.py, edit_stl, build_model, validate_stl, or mesh_preview. Those scripts remain the business logic and source of truth.</p>
+        </section>
+        <section>
+          <h3>Workflow</h3>
+          <p>Select a model or mesh, choose an action, adjust flags, read the command, then run it. The GUI does not hide the script layer.</p>
+        </section>
+        <section>
+          <h3>Viewer</h3>
+          <p>Use the mouse to rotate and zoom the STL preview. Snap buttons reset the camera to repeatable views.</p>
+        </section>
+        <section>
+          <h3>Commands</h3>
+          <p>The command panel shows exactly what will run. The rows beneath it explain positional arguments and flags.</p>
+        </section>
+        <section>
+          <h3>Outputs</h3>
+          <p>Generated files stay under the project tree. Use Refresh after external file changes.</p>
+        </section>
+      </div>
+    </aside>
+
+    <div id="helpTip" class="help-tip" role="tooltip" hidden></div>
+
+    <script src="/static/app.js?v=20260612c"></script>
+  </body>
+</html>

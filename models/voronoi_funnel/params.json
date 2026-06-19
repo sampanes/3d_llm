@@ -1,0 +1,32 @@
+{
+  "height_mm": 160.0,
+  "profile_r_z": [
+    [34, 0],
+    [49, 22],
+    [41, 50],
+    [31, 85],
+    [39, 115],
+    [54, 140],
+    [74, 160]
+  ],
+  "profile_smooth_samples": 96,
+  "profile_extend_mm": 12.0,
+
+  "cell_count": 250,
+  "cell_relax_iters": 6,
+  "cell_density_bottom_boost": 2.2,
+  "strut_radius_mm": 1.6,
+
+  "twist_deg": 150.0,
+  "warp_amplitude_mm": 2.0,
+  "warp_frequency": 0.035,
+
+  "rim_radius_mm": 2.2,
+  "base_disk_radius_mm": 56.0,
+  "base_disk_height_mm": 2.4,
+  "blend_mm": 1.5,
+
+  "seed": 5,
+  "voxel_mm": 0.45,
+  "decimate_to": 280000
+}
