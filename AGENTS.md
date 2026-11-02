@@ -45,7 +45,7 @@ machine (Windows 10, Python 3.11 venv at `.venv`, portable OpenSCAD in
 | Coral, antlers, bones, plants, blobby/grown/melted anything | **SDF toolkit** (`scripts/sdf_kit.py` + `scripts/organic.py`) | Smooth blending, noise, branching — impossible in CSG |
 | Voronoi lattice / open-cell shells (vases, lamps, "skeleton" surfaces) | **SDF toolkit**: `og.voronoi_lattice` (worked example: `models/voronoi_funnel/`) | Round struts along Voronoi cell edges on any revolved surface |
 | "Edit this STL" (scale, hollow, cut, repair, merge) | **`scripts/edit_stl.py`** | Works on any mesh, no source needed |
-| Photoreal character/creature from reference images | **External AI mesh gen** (see `docs/resources.md` § Image→3D), then repair/scale here | Parametric code can't do likeness; TRELLIS/Hunyuan3D can |
+| Photoreal character/creature from reference images | **External AI mesh gen** (see `docs/resources.md` § Neural 3D Generation), then repair/scale here | Parametric code can't do likeness; TRELLIS/Hunyuan3D can |
 
 Mixing is normal: grow an organic SDF part, then boolean a CadQuery-precise
 mount onto it with `edit_stl boolean`.

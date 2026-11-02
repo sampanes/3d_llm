@@ -81,9 +81,40 @@ Last updated: 2026-06-09
 
 ## Neural 3D Generation (Mesh-Based)
 
+Use these for characters, creatures and anything whose look is a *likeness* rather than a
+dimension. The code pipelines (OpenSCAD, CadQuery, the SDF kit) place primitives by numbers an
+LLM guesses, so a lion's leg comes out as a cylinder stuck on a sphere no matter which tool
+writes the cylinder. A learned 3D model does not have that problem. Its output is rarely
+watertight, so the mesh comes back into this repo for `edit_stl repair`, `edit_stl scale` and
+`validate_stl` before printing.
+
 | Tool | URL | Notes |
 |------|-----|-------|
-| **Shap-E** | [GitHub](https://github.com/openai/shap-e) | OpenAI's text/image → 3D mesh (MIT). Not ideal for printing — outputs need cleanup. |
+| **TRELLIS.2 via StableGen** ⭐ | [StableGen wiki](https://github.com/sakalond/StableGen/wiki/TRELLIS.2-mesh-generation) | Free Blender add-on. Prompt → reference image → mesh through a local ComfyUI server with the ComfyUI-TRELLIS2 node (GPU needed). Shows a gallery of candidate images before meshing; can texture the result. Blender is only the front end: the ComfyUI node runs without it. |
+| **TRELLIS** | [GitHub](https://github.com/microsoft/TRELLIS) | Microsoft's first-generation image → 3D model behind the above. |
+| **Hunyuan3D** | [GitHub](https://github.com/Tencent/Hunyuan3D-2) | Tencent's image → 3D, open weights. Same role as TRELLIS; use whichever installs cleanly. |
+| **Shap-E** | [GitHub](https://github.com/openai/shap-e) | OpenAI's text/image → 3D mesh (MIT). Older and coarse; outputs need cleanup. |
+| **LLaMA-Mesh (huggingface/meshgen)** | [GitHub](https://github.com/nv-tlabs/LLaMA-Mesh) | Writes vertex coordinates as text through an LLM. Simple low-poly objects, not characters; needs an NVIDIA GPU with 8 GB; the add-on was last pushed 2025-04. |
+
+### Blender "AI" add-ons: which ones change anything (2026-11-02)
+
+Reviewed after Hello Kitty and a lion's legs came out as elementary shapes warped onto each
+other. Three classes:
+
+- **Same approach as this repo, different backend.** An LLM writes `bpy` code instead of
+  OpenSCAD: mac999/blender-llm-addin, ifBars/blender-agent-studio (a plugin for coding agents,
+  real and maintained), meshgen's agent mode. For a character they reproduce the warped-primitive
+  result. The render → look → fix loop they advertise is already AGENTS.md step 5.
+- **Changes the outcome:** StableGen's TRELLIS.2 mode (table above). The only route in the list
+  that gives a leg muscle taper and a paw.
+- **Could not be found:** MrKuros/blah. Lists that cite social-media reels are low trust.
+
+Two cheaper checks inside the SDF kit before installing a GPU pipeline: build with
+`sk.smooth_union` (blend radius 2–4 mm) instead of hard unions, and make limbs from
+`og.Skeleton` + `og.skeleton_sdf` or `sk.cone_capsule` so they taper and blend into the body,
+with proportions taken from a reference image (`scripts.generate --image`). Hello Kitty is
+genuinely an ellipsoid head, a bow and a body, so she is winnable this way. A lion will still
+read as a stylized toy; only the generative route gets past that.
 
 ---
 
