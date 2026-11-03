@@ -36,6 +36,35 @@ machine (Windows 10, Python 3.11 venv at `.venv`, portable OpenSCAD in
 
 ---
 
+## Characters and animals (Hello Kitty, a lion): read before building one
+
+Added 2026-11-02, after Hello Kitty and a lion's legs both came out as elementary shapes warped
+onto each other. Unlike the rest of this file, nothing in this section has been run yet.
+
+Switching code backends does not fix that. An LLM places primitives by guessed numbers, and a hard
+union of a cylinder into a sphere reads as a leg stuck on a body whichever backend draws it. There
+are two routes, cheapest first:
+
+1. **Inside this repo, for simple characters.** Use the SDF kit with `sk.smooth_union` (blend
+   radius 2-4 mm) instead of hard unions. Make limbs from `og.Skeleton` + `og.skeleton_sdf` or
+   `sk.cone_capsule` so they taper and blend into the body. Take proportions from a reference image
+   in `models/<name>/refs/`. Hello Kitty (an ellipsoid head, a bow, a body) is winnable this way.
+   A lion stays a stylized toy.
+2. **An image-to-3D model, outside this repo, for likeness.** Run `nvidia-smi` first, because the
+   GPU decides which one:
+
+| Repo | Needs | How |
+|---|---|---|
+| [Tencent/Hunyuan3D-2](https://github.com/Tencent/Hunyuan3D-2) | NVIDIA GPU, 6 GB VRAM for shape only (a print needs no texture). Windows, macOS, Linux. | Clone it next to this repo, not inside it, with its own venv. Install PyTorch for the GPU, then `pip install -r requirements.txt` and `pip install -e .`. Skip the two texture extensions. `python gradio_app.py --disable_tex --low_vram_mode --host 127.0.0.1` serves a local page: image in, mesh out. Without `--host` it listens on every interface. |
+| [microsoft/TRELLIS.2](https://github.com/microsoft/TRELLIS.2) | NVIDIA GPU, 24 GB VRAM. Tested on Linux only. | `setup.sh --new-env`, then `python app.py`. The Blender front end is [StableGen](https://github.com/sakalond/StableGen/wiki/TRELLIS.2-mesh-generation), which drives a local ComfyUI with the [ComfyUI-TRELLIS2](https://github.com/PozzettiAndrea/ComfyUI-TRELLIS2) node. |
+
+Either way, the mesh then comes back here for the normal loop:
+`edit_stl convert in.glb -o model.stl`, then `edit_stl repair`, `edit_stl scale --to-z <mm>`,
+`validate_stl` and `mesh_preview`, and you LOOK at it. More background, plus which Blender "AI"
+add-ons are worth anything, is in `docs/resources.md` under "Neural 3D Generation".
+
+---
+
 ## Choosing the right backend
 
 | Request smells like… | Use | Why |
@@ -45,7 +74,7 @@ machine (Windows 10, Python 3.11 venv at `.venv`, portable OpenSCAD in
 | Coral, antlers, bones, plants, blobby/grown/melted anything | **SDF toolkit** (`scripts/sdf_kit.py` + `scripts/organic.py`) | Smooth blending, noise, branching — impossible in CSG |
 | Voronoi lattice / open-cell shells (vases, lamps, "skeleton" surfaces) | **SDF toolkit**: `og.voronoi_lattice` (worked example: `models/voronoi_funnel/`) | Round struts along Voronoi cell edges on any revolved surface |
 | "Edit this STL" (scale, hollow, cut, repair, merge) | **`scripts/edit_stl.py`** | Works on any mesh, no source needed |
-| Photoreal character/creature from reference images | **External AI mesh gen** (see `docs/resources.md` § Neural 3D Generation), then repair/scale here | Parametric code can't do likeness; TRELLIS/Hunyuan3D can |
+| A recognizable character or animal (Hello Kitty, a lion), anything that must look like a reference | **SDF kit with smooth blends** for simple ones, else **image-to-3D** (Hunyuan3D-2, TRELLIS.2), then repair/scale here. See "Characters and animals" above | Parametric code can't do likeness |
 
 Mixing is normal: grow an organic SDF part, then boolean a CadQuery-precise
 mount onto it with `edit_stl boolean`.

@@ -2,6 +2,8 @@
 
 Use various LLMs to reliably generate 3D-printable STL files through programmatic CAD pipelines (OpenSCAD and CadQuery). Instead of prompting an LLM for raw mesh data, this project asks models to write **CAD code** — OpenSCAD scripts or CadQuery Python — which is then compiled into watertight, printable STL files. The result is a repeatable, validated pipeline from natural-language description to physical print.
 
+**Characters and animals** (Hello Kitty, a lion) come out of code as primitives stuck together. `AGENTS.md` § "Characters and animals" has the two routes: smooth SDF blends in this repo, or an image-to-3D model (Hunyuan3D-2 needs 6 GB of VRAM; TRELLIS.2 needs 24 GB) whose mesh comes back here for repair and scaling.
+
 ---
 
 ## Directory Structure

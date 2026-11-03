@@ -90,9 +90,9 @@ watertight, so the mesh comes back into this repo for `edit_stl repair`, `edit_s
 
 | Tool | URL | Notes |
 |------|-----|-------|
-| **TRELLIS.2 via StableGen** ⭐ | [StableGen wiki](https://github.com/sakalond/StableGen/wiki/TRELLIS.2-mesh-generation) | Free Blender add-on. Prompt → reference image → mesh through a local ComfyUI server with the ComfyUI-TRELLIS2 node (GPU needed). Shows a gallery of candidate images before meshing; can texture the result. Blender is only the front end: the ComfyUI node runs without it. |
+| **Hunyuan3D-2** ⭐ | [GitHub](https://github.com/Tencent/Hunyuan3D-2) | Tencent's image → 3D, open weights. 6 GB VRAM for shape only (all a print needs), 16 GB with texture; Windows, macOS, Linux. Local Gradio page via `gradio_app.py --disable_tex --low_vram_mode`; also ships a Blender add-on. The first one to try on a home PC. |
+| **TRELLIS.2 via StableGen** | [StableGen wiki](https://github.com/sakalond/StableGen/wiki/TRELLIS.2-mesh-generation) | Free Blender add-on. Prompt → reference image → mesh through a local ComfyUI server with the [ComfyUI-TRELLIS2](https://github.com/PozzettiAndrea/ComfyUI-TRELLIS2) node. TRELLIS.2 itself ([GitHub](https://github.com/microsoft/TRELLIS.2)) states 24 GB VRAM and Linux-only testing. Shows a gallery of candidate images before meshing; can texture the result. Blender is only the front end: the ComfyUI node runs without it. |
 | **TRELLIS** | [GitHub](https://github.com/microsoft/TRELLIS) | Microsoft's first-generation image → 3D model behind the above. |
-| **Hunyuan3D** | [GitHub](https://github.com/Tencent/Hunyuan3D-2) | Tencent's image → 3D, open weights. Same role as TRELLIS; use whichever installs cleanly. |
 | **Shap-E** | [GitHub](https://github.com/openai/shap-e) | OpenAI's text/image → 3D mesh (MIT). Older and coarse; outputs need cleanup. |
 | **LLaMA-Mesh (huggingface/meshgen)** | [GitHub](https://github.com/nv-tlabs/LLaMA-Mesh) | Writes vertex coordinates as text through an LLM. Simple low-poly objects, not characters; needs an NVIDIA GPU with 8 GB; the add-on was last pushed 2025-04. |
 
